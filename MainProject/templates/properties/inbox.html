@@ -1,0 +1,12 @@
+<h2>📥 Your Messages</h2>
+<hr>
+
+{% for msg in chats %}
+  <a href="{% url 'chat' msg.property.id msg.sender.id %}">
+      <p><strong>{{ msg.sender.username }}</strong>: {{ msg.message|slice:":40" }}...</p>
+      <small>{{ msg.timestamp }}</small>
+  </a>
+  <hr>
+{% empty %}
+  <p>No messages yet.</p>
+{% endfor %}

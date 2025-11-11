@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Add New Property</h2>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <label>Upload Images (You can select multiple):</label>
+  <input type="file" name="images" multiple class="form-control">
+
+  <button class="btn btn-success mt-3">Save Property</button>
+</form>
+
+{% endblock %}

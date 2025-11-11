@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container my-4">
+
+  <h2>{{ property.title }}</h2>
+  <p><strong>City:</strong> {{ property.city }}</p>
+  <p><strong>Price:</strong> ₹{{ property.price }}</p>
+  <p><strong>Type:</strong> {{ property.property_type }}</p>
+  <p><strong>Description:</strong> {{ property.description }}</p>
+
+  <h5>Amenities:</h5>
+  <ul>
+    {% for a in property.amenities %}
+      <li>{{ a }}</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'book_visit' property.id %}" class="btn btn-success">
+    Book Visit
+  </a>
+
+</div>
+
+<div id="carouselExample" class="carousel slide mb-3">
+
+  <div class="carousel-inner">
+    {% for img in property.propertyimage_set.all %}
+    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+      <img src="{{ img.image.url }}" class="d-block w-100" style="max-height: 400px; object-fit: cover;">
+    </div>
+    {% endfor %}
+  </div>
+
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+  </button>
+
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+  </button>
+
+</div>
+
+{% endblock %}
