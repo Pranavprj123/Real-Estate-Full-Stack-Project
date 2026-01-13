@@ -1,40 +1,36 @@
+
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}Properties{% endblock %}
 
 {% block content %}
 
-<h3 class="mb-4 fw-semibold text-primary">Available Properties</h3>
+<h3 class="mb-4 fw-bold text-primary">Available Properties</h3>
 
 <div class="row g-4">
 
-  {% for p in properties %}
-  <div class="col-md-4">
-    <div class="card property-card border-0 shadow-sm">
-      
-      {% if p.images.first %}
-      <img src="{{ p.images.first.image.url }}" class="card-img-top" style="height:200px; object-fit:cover;">
-      {% else %}
-      <img src="{% static 'images/no-image.png' %}" class="card-img-top" style="height:200px; object-fit:cover;">
-      {% endif %}
+    {% for p in properties %}
+    <div class="col-md-4">
 
-      <div class="card-body">
-        <h5 class="card-title fw-bold">{{ p.name }}</h5>
+        <div class="card property-card border-0 shadow-sm" style="border-radius: 15px; overflow: hidden;">
+            {% if p.images.first %}
+            <img src="{{ p.images.first.image.url }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+            {% else %}
+            <img src="{% static 'images/no-image.png' %}" class="card-img-top" style="height: 220px; object-fit: cover;">
+            {% endif %}
 
-        <p class="text-muted mb-1" style="font-size:14px;">
-          {{ p.location }}
-        </p>
-
-        <p class="fw-semibold text-success" style="font-size:18px;">
-          ₹ {{ p.price|floatformat:0 }}
-        </p>
-
-        <a href="{% url 'property_detail' p.id %}" class="btn btn-primary w-100">View Details</a>
-      </div>
+            <div class="card-body">
+                <h5 class="card-title fw-bold">{{ p.name }}</h5>
+                <p class="text-muted mb-1">{{ p.location }}</p>
+                <p class="fw-semibold text-success">₹ {{ p.price|floatformat:0 }}</p>
+                <a href="{% url 'property_detail' p.id %}" class="btn btn-primary w-100 mt-2">View Details</a>
+            </div>
+        </div>
 
     </div>
-  </div>
-  {% endfor %}
+    {% empty %}
+        <p class="text-center text-muted">No properties available.</p>
+    {% endfor %}
 
 </div>
 

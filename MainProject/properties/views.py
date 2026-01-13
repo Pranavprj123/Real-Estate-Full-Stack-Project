@@ -3,12 +3,12 @@ from datetime import date
 from visits.models import VisitRequest
 from django.contrib.auth.decorators import login_required
 from accounts.decorators import agent_required
-from .forms import PropertyForm, PropertyImageForm, ChatMessageForm
+from .forms import PropertyForm, PropertyImageForm
 from django.contrib.auth.models import User
-from .models import Property, PropertyImage, ChatMessage
+from .models import Property, PropertyImage, Wishlist
 from django.contrib import messages
 from django.db.models import Q
-
+from .models import Wishlist
 
 # Create your views here.
 
@@ -17,38 +17,46 @@ def property_list(request):
     properties = Property.objects.all()
 
     city = request.GET.get("city")
-    type = request.GET.get("type")
+    bhk = request.GET.get("bhk")
     min_price = request.GET.get("min_price")
     max_price = request.GET.get("max_price")
-    furnished = request.GET.get("furnished")
-    amenities = request.GET.getlist("amenities")
 
-    if city and city != "":
+    if city:
         properties = properties.filter(city__icontains=city)
 
-    if type and type != "":
-        properties = properties.filter(property_type=type)
+    if bhk:
+        properties = properties.filter(bhk=bhk)
 
-    if min_price and max_price:
-        properties = properties.filter(price__range=[min_price, max_price])
+    if min_price:
+        properties = properties.filter(price__gte=min_price)
 
-    if furnished == "yes":
-        properties = properties.filter(furnished=True)
+    if max_price:
+        properties = properties.filter(price__lte=max_price)
 
-    if amenities:
-        for amenity in amenities:
-            properties = properties.filter(amenities__contains=amenity)
+    return render(request, "property_list.html", {"properties": properties})
 
-    context = {"properties": properties}
-    return render(request, "properties/property_list.html", context)
 
 def property_detail(request, id):
     property = get_object_or_404(Property, id=id)
     context = {"property": property}
     return render(request, "properties/property_detail.html", context)
 
+def listings_view(request):
+    properties = Property.objects.all()
+    return render(request, "properties/listings.html", {"properties": properties})
 
 @login_required
+def add_to_wishlist(request, pk):
+    property_obj = Property.objects.get(id=pk)
+
+    Wishlist.objects.get_or_create(
+        user=request.user,
+        property=property_obj
+    )
+
+    messages.success(request, "Added to wishlist!")
+    return redirect('property_detail', pk=pk)
+
 def book_visit(request, id):
     property = get_object_or_404(Property, id=id)
 
@@ -131,41 +139,41 @@ def delete_property(request, property_id):
     return redirect('agent_dashboard')
 
 
-def chat_view(request, property_id, agent_id):
-    property_obj = Property.objects.get(id=property_id)
-    agent = User.objects.get(id=agent_id)
+# def chat_view(request, property_id, agent_id):
+#     property_obj = Property.objects.get(id=property_id)
+#     agent = User.objects.get(id=agent_id)
 
-    if request.user == agent:
-        receiver = None  # agent will reply to selected buyer later
-    else:
-        receiver = agent  # buyer sends to agent
+#     if request.user == agent:
+#         receiver = None  # agent will reply to selected buyer later
+#     else:
+#         receiver = agent  # buyer sends to agent
 
-    # Fetch chat messages between these two
-    messages_qs = ChatMessage.objects.filter(
-        property=property_obj,
-        sender__in=[request.user, agent],
-        receiver__in=[request.user, agent]
-    )
+#     # Fetch chat messages between these two
+#     messages_qs = ChatMessage.objects.filter(
+#         property=property_obj,
+#         sender__in=[request.user, agent],
+#         receiver__in=[request.user, agent]
+#     )
 
-    if request.method == "POST":
-        form = ChatMessageForm(request.POST)
-        if form.is_valid():
-            msg = form.save(commit=False)
-            msg.sender = request.user
-            msg.receiver = agent if request.user != agent else request.POST.get("receiver")
-            msg.property = property_obj
-            msg.save()
-            return redirect('chat', property_id=property_id, agent_id=agent_id)
+#     if request.method == "POST":
+#         form = ChatMessageForm(request.POST)
+#         if form.is_valid():
+#             msg = form.save(commit=False)
+#             msg.sender = request.user
+#             msg.receiver = agent if request.user != agent else request.POST.get("receiver")
+#             msg.property = property_obj
+#             msg.save()
+#             return redirect('chat', property_id=property_id, agent_id=agent_id)
 
-    else:
-        form = ChatMessageForm()
+#     else:
+#         form = ChatMessageForm()
 
-    return render(request, 'properties/chat.html', {
-        'form': form,
-        'messages': messages_qs,
-        'property': property_obj,
-        'agent': agent
-    })
+#     return render(request, 'properties/chat.html', {
+#         'form': form,
+#         'messages': messages_qs,
+#         'property': property_obj,
+#         'agent': agent
+#     })
 
 def get_unread_count(user):
     return ChatMessage.objects.filter(receiver=user, is_read=False).count()

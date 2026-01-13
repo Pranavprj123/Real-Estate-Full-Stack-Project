@@ -1,40 +1,28 @@
 from django.db import models
 from django.contrib.auth.models import User
-from multiselectfield import MultiSelectField
 
-# Create your models here.
-
-
-
+BHK_CHOICES = (
+    ('1', '1 BHK'),
+    ('2', '2 BHK'),
+    ('3', '3 BHK'),
+    ('4', '4 BHK'),
+)
 
 class Property(models.Model):
-    PROPERTY_TYPE = (
-        ('flat', 'Flat'),
-        ('house', 'House'),
-        ('office', 'Office'),
-    )
-
-    AMENITIES_CHOICES = (
-        ('parking', 'Parking'),
-        ('lift', 'Lift'),
-        ('security', 'Security'),
-        ('furnished', 'Furnished'),
-        ('balcony', 'Balcony'),
-        ('powerbackup', 'Power Backup'),
-    )
-
+    title = models.CharField(max_length=200, default="No Title")
+    description = models.TextField(default="No Description")
+    price = models.IntegerField(default=0)
+    city = models.CharField(max_length=100, default="Unknown")
+    state = models.CharField(max_length=100, default="Unknown")
+    address = models.CharField(max_length=255, default="Not Available")
+    bhk = models.IntegerField(default=1)
+    main_image = models.ImageField(upload_to='properties/', blank=True, null=True)
     
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=150)
-    description = models.TextField()
-    property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE)
-    address = models.CharField(max_length=255)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    furnished = models.BooleanField(default=False)
-    amenities = MultiSelectField(choices=AMENITIES_CHOICES, max_length=200, blank=True)
-    status = models.CharField(max_length=20, default="available")
+    property_type = models.CharField(max_length=50, default="Apartment")
+    furnished = models.CharField(max_length=50, default="Unfurnished")
+    amenities = models.TextField(default="")
+
+    seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="properties")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -42,22 +30,20 @@ class Property(models.Model):
 
 
 class PropertyImage(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='property_images/')
+    property = models.ForeignKey(Property, related_name="images", on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="property_extra/")
 
     def __str__(self):
         return f"Image for {self.property.title}"
-    
-class ChatMessage(models.Model):
+
+
+class Wishlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)  # 👈 NEW
 
     class Meta:
-        ordering = ['timestamp']
+        unique_together = ('user', 'property')
 
     def __str__(self):
-        return f"{self.sender} → {self.receiver} | {self.property.title}"
+        return f"{self.user.username} -> {self.property.title}"
+

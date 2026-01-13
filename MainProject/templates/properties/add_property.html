@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Add Property{% endblock %}
+
+{% block content %}
+
+<div class="container py-5" style="max-width: 650px;">
+    <div class="card shadow-sm p-4" style="border-radius: 15px;">
+        <h3 class="text-center mb-4 fw-bold text-primary">Add New Property</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label class="form-label">Property Name</label>
+                <input type="text" name="name" class="form-control" placeholder="e.g., Modern 2BHK" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" name="location" class="form-control" placeholder="City, Area" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Price (₹)</label>
+                <input type="number" name="price" class="form-control" placeholder="e.g., 12500000" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="4" placeholder="Write something about the property..." required></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload Images</label>
+                <input type="file" name="images" class="form-control" multiple>
+                <small class="text-muted">You can upload multiple images</small>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3">Submit Property</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

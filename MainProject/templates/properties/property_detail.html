@@ -1,62 +1,50 @@
 {% extends 'base.html' %}
-{% load static %}
 {% block title %}{{ property.name }}{% endblock %}
 
 {% block content %}
 
-<div class="row">
+<div class="container py-5">
+    <div class="row g-4">
+        
+        <!-- Images -->
+        <div class="col-md-6">
+            {% if property.images.all %}
+            <div id="carouselPropertyImages" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    {% for img in property.images.all %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ img.image.url }}" class="d-block w-100" style="height: 400px; object-fit: cover;">
+                    </div>
+                    {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselPropertyImages" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselPropertyImages" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
+            </div>
+            {% else %}
+                <img src="{% static 'images/no-image.png' %}" class="img-fluid rounded">
+            {% endif %}
+        </div>
 
-  <!-- LEFT COLUMN: Image Gallery -->
-  <div class="col-md-7">
+        <!-- Details -->
+        <div class="col-md-6">
+            <h2 class="fw-bold text-primary">{{ property.name }}</h2>
+            <p class="text-muted mb-2">{{ property.location }}</p>
+            <p class="fw-semibold text-success" style="font-size: 1.5rem;">₹ {{ property.price|floatformat:0 }}</p>
+            <hr>
+            <p>{{ property.description }}</p>
 
-    <!-- Main Image -->
-    {% if images %}
-    <img src="{{ images.first.image.url }}" class="img-fluid rounded shadow-sm mb-3" style="height:350px; object-fit:cover;">
-    {% else %}
-    <img src="{% static 'images/no-image.png' %}" class="img-fluid rounded shadow-sm mb-3">
-    {% endif %}
+            {% if user.is_authenticated %}
+                <a href="#" class="btn btn-primary mt-3">Contact Agent</a>
+            {% else %}
+                <p class="text-muted mt-3">Please <a href="{% url 'login_user' %}">login</a> to contact the agent.</p>
+            {% endif %}
+        </div>
 
-    <!-- Thumbnail Row -->
-    <div class="d-flex gap-2">
-      {% for img in images %}
-      <img src="{{ img.image.url }}" class="rounded" style="height:75px; width:100px; object-fit:cover; cursor:pointer;"
-           onclick="document.getElementById('mainImage').src='{{ img.image.url }}'">
-      {% endfor %}
     </div>
-
-  </div>
-
-  <!-- RIGHT COLUMN: Info -->
-  <div class="col-md-5">
-    <h2 class="fw-bold">{{ property.name }}</h2>
-
-    <p class="text-muted mb-1">
-      📍 {{ property.location }}
-    </p>
-
-    <h3 class="text-success fw-bold mb-3">
-      ₹ {{ property.price|floatformat:0 }}
-    </h3>
-
-    <p style="font-size:15px; line-height:1.6;">
-      {{ property.description }}
-    </p>
-
-    <hr>
-
-    <h6 class="text-secondary mb-2">Listed By:</h6>
-    <p class="fw-semibold">{{ property.agent.username }}</p>
-
-    <a href="tel:{{ property.agent.phone }}" class="btn btn-outline-primary w-100 mb-2">
-      📞 Contact Agent
-    </a>
-
-    <a href="{% url 'chat' property.id property.agent.id %}" class="btn btn-primary w-100">
-      💬 Chat with Agent
-    </a>
-
-  </div>
-
 </div>
 
 {% endblock %}

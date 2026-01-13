@@ -1,0 +1,295 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    :root {
+        --primary-color: #2D3E50;
+        --secondary-color: #E8505B;
+        --accent-color: #F9A826;
+        --success-color: #28A745;
+        --light-bg: #F8F9FA;
+        --dark-text: #1A1A1A;
+        --light-text: #6C757D;
+    }
+
+    /* Page Header */
+    .page-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a2634 100%);
+        border-radius: 16px;
+        padding: 3rem 2.5rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 350px;
+        height: 350px;
+        background: radial-gradient(circle, rgba(249, 168, 38, 0.12) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+
+    .page-header h2 {
+        color: white;
+        font-weight: 800;
+        font-size: 2.8rem;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .page-header p {
+        color: rgba(255,255,255,0.85);
+        font-size: 1.1rem;
+        margin: 0.5rem 0 0 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Property Grid */
+    .properties-grid {
+        margin-top: 2rem;
+    }
+
+    /* Property Cards */
+    .property-card {
+        border: none;
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        height: 100%;
+        background: white;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .property-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+
+    .card-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        height: 240px;
+    }
+
+    .property-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .property-card:hover img {
+        transform: scale(1.1);
+    }
+
+    .property-type-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--primary-color);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+
+    .property-card .card-body {
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .property-card h5 {
+        color: var(--primary-color);
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-bottom: 1rem;
+        min-height: 3rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .property-details {
+        color: var(--light-text);
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .property-details span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .property-details .divider {
+        color: #dee2e6;
+    }
+
+    .price-highlight {
+        color: var(--secondary-color);
+        font-weight: 700;
+        font-size: 1.15rem;
+    }
+
+    .card-actions {
+        margin-top: auto;
+    }
+
+    /* Buttons */
+    .btn-buy {
+        background: linear-gradient(135deg, var(--success-color) 0%, #20833A 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-buy:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        background: linear-gradient(135deg, #20833A 0%, var(--success-color) 100%);
+        color: white;
+    }
+
+    .btn-login-required {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, #d43f49 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(232, 80, 91, 0.3);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-login-required:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(232, 80, 91, 0.4);
+        background: linear-gradient(135deg, #d43f49 0%, var(--secondary-color) 100%);
+        color: white;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state h3 {
+        color: var(--primary-color);
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .empty-state p {
+        color: var(--light-text);
+        font-size: 1.1rem;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+        }
+
+        .page-header p {
+            font-size: 1rem;
+        }
+    }
+</style>
+
+<!-- Page Header -->
+<div class="page-header">
+    <h2>All Properties</h2>
+    <p>Discover your perfect home from our curated collection</p>
+</div>
+
+<!-- Properties Grid -->
+<div class="row properties-grid g-4">
+    {% if properties %}
+        {% for p in properties %}
+        <div class="col-lg-4 col-md-6">
+            <div class="property-card card">
+                <div class="card-img-wrapper">
+                    <img src="{{ p.main_image.url }}" class="card-img-top" alt="{{ p.title }}">
+                    <span class="property-type-badge">{{ p.bhk }} BHK</span>
+                </div>
+                <div class="card-body">
+                    <h5>{{ p.title }}</h5>
+                    <div class="property-details">
+                        <span>🛏️ {{ p.bhk }} BHK</span>
+                        <span class="divider">•</span>
+                        <span class="price-highlight">₹ {{ p.price }}Cr</span>
+                        <span class="divider">•</span>
+                        <span>📍 {{ p.city }}</span>
+                    </div>
+                    <div class="card-actions">
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'book_visit' p.id %}" class="btn btn-buy">
+                            <span>🏡</span>
+                            <span>Buy Now</span>
+                        </a>
+                        {% else %}
+                        <a href="{% url 'login_user' %}" class="btn btn-login-required">
+                            <span>🔒</span>
+                            <span>Login to Buy</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="col-12">
+            <div class="empty-state">
+                <div class="empty-state-icon">🏘️</div>
+                <h3>No Properties Available</h3>
+                <p>Check back soon for new listings!</p>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}
