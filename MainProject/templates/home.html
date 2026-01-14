@@ -2,6 +2,7 @@
 
 {% block extra_css %}
 <style>
+/* ================= HERO ================= */
 .hero {
     background: linear-gradient(135deg, #2D3E50, #1a2634);
     color: white;
@@ -12,7 +13,8 @@
 .hero h1 {
     font-weight: 800;
 }
-/* ===== Featured Property Cards ===== */
+
+/* ================= FEATURED PROPERTY CARDS ================= */
 .featured-card {
     background: #ffffff;
     border-radius: 18px;
@@ -67,6 +69,11 @@
     font-weight: 700;
     color: #1f2937;
     margin-bottom: 12px;
+    text-decoration: none;
+}
+
+.featured-title:hover {
+    text-decoration: underline;
 }
 
 /* Property Info Row */
@@ -77,6 +84,7 @@
     color: #6b7280;
     font-size: 0.95rem;
     margin-bottom: 18px;
+    flex-wrap: wrap;
 }
 
 .featured-info span {
@@ -109,13 +117,12 @@
     box-shadow: 0 6px 20px rgba(40,167,69,0.4);
     color: #ffffff;
 }
-
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- HERO ONLY ON HOME -->
+<!-- ================= HERO SECTION (HOME ONLY) ================= -->
 <div class="hero">
     <h1>Find Your Dream Home</h1>
     <p class="fs-5 mt-2">Browse verified properties across India.</p>
@@ -124,7 +131,8 @@
     </a>
 </div>
 
-<h2 class="section-heading">Featured Properties</h2>
+<!-- ================= FEATURED PROPERTIES ================= -->
+<h2 class="section-heading mb-4">Featured Properties</h2>
 
 <div class="row g-4">
 
@@ -132,13 +140,15 @@
     <div class="col-md-4">
         <div class="featured-card">
 
-            <!-- Image -->
+            <!-- Image (Clickable) -->
             <div class="featured-img-wrapper">
-                {% if p.main_image %}
-                    <img src="{{ p.main_image.url }}" alt="{{ p.title }}">
-                {% else %}
-                    <img src="https://via.placeholder.com/400x300?text=No+Image">
-                {% endif %}
+                <a href="{% url 'property_detail' p.id %}">
+                    {% if p.main_image %}
+                        <img src="{{ p.main_image.url }}" alt="{{ p.title }}">
+                    {% else %}
+                        <img src="https://via.placeholder.com/400x300?text=No+Image">
+                    {% endif %}
+                </a>
 
                 <div class="bhk-badge">
                     {{ p.bhk }} BHK
@@ -147,12 +157,16 @@
 
             <!-- Content -->
             <div class="featured-body">
-                <h5 class="featured-title">{{ p.title }}</h5>
+
+                <!-- Title (Clickable) -->
+                <a href="{% url 'property_detail' p.id %}" class="featured-title">
+                    {{ p.title }}
+                </a>
 
                 <div class="featured-info">
                     <span>🛏 {{ p.bhk }} BHK</span>
                     <span>•</span>
-                    <span class="featured-price">₹ {{ p.price }}Cr</span>
+                    <span class="featured-price">₹ {{ p.price }} Cr</span>
                     <span>•</span>
                     <span>📍 {{ p.city }}</span>
                 </div>
@@ -170,9 +184,10 @@
 
         </div>
     </div>
+    {% empty %}
+        <p>No featured properties available.</p>
     {% endfor %}
 
 </div>
-
 
 {% endblock %}

@@ -37,9 +37,10 @@ def property_list(request):
 
 
 def property_detail(request, id):
-    property = get_object_or_404(Property, id=id)
-    context = {"property": property}
-    return render(request, "properties/property_detail.html", context)
+    property_obj = get_object_or_404(Property, id=id)
+    return render(request, "properties/property_detail.html", {
+        "property": property_obj
+    })
 
 def listings_view(request):
     properties = Property.objects.all()

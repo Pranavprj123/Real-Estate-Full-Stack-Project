@@ -1,50 +1,146 @@
 {% extends 'base.html' %}
-{% block title %}{{ property.name }}{% endblock %}
 
 {% block content %}
+<style>
+    .detail-wrapper {
+        background: #ffffff;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
 
-<div class="container py-5">
+    .carousel-item img {
+        height: 420px;
+        object-fit: cover;
+        border-radius: 16px;
+    }
+
+    .price {
+        color: #E8505B;
+        font-weight: 800;
+        font-size: 2rem;
+    }
+
+    .bhk-badge {
+        background: #F9A826;
+        color: white;
+        padding: 0.4rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 600;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
+
+    .amenities {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .amenity {
+        background: #f8f9fa;
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+    }
+
+    .btn-book {
+        background: linear-gradient(135deg, #28A745, #1e8e3e);
+        color: white;
+        border-radius: 12px;
+        padding: 1rem 2.5rem;
+        font-weight: 700;
+        border: none;
+    }
+
+    .btn-book:hover {
+        background: linear-gradient(135deg, #1e8e3e, #28A745);
+        color: white;
+    }
+</style>
+
+<div class="detail-wrapper">
+
     <div class="row g-4">
-        
-        <!-- Images -->
+
+        <!-- IMAGE GALLERY -->
         <div class="col-md-6">
-            {% if property.images.all %}
-            <div id="carouselPropertyImages" class="carousel slide" data-bs-ride="carousel">
+
+            <div id="propertyCarousel" class="carousel slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    {% for img in property.images.all %}
-                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                        <img src="{{ img.image.url }}" class="d-block w-100" style="height: 400px; object-fit: cover;">
+
+                    <!-- Main Image -->
+                    {% if property.main_image %}
+                    <div class="carousel-item active">
+                        <img src="{{ property.main_image.url }}" class="d-block w-100">
                     </div>
-                    {% endfor %}
+                    {% endif %}
+
+                    <!-- Future extra images can go here -->
+
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#carouselPropertyImages" data-bs-slide="prev">
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#propertyCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon"></span>
                 </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#carouselPropertyImages" data-bs-slide="next">
+                <button class="carousel-control-next" type="button" data-bs-target="#propertyCarousel" data-bs-slide="next">
                     <span class="carousel-control-next-icon"></span>
                 </button>
             </div>
-            {% else %}
-                <img src="{% static 'images/no-image.png' %}" class="img-fluid rounded">
-            {% endif %}
+
         </div>
 
-        <!-- Details -->
+        <!-- PROPERTY DETAILS -->
         <div class="col-md-6">
-            <h2 class="fw-bold text-primary">{{ property.name }}</h2>
-            <p class="text-muted mb-2">{{ property.location }}</p>
-            <p class="fw-semibold text-success" style="font-size: 1.5rem;">₹ {{ property.price|floatformat:0 }}</p>
-            <hr>
-            <p>{{ property.description }}</p>
+            <h2 class="fw-bold">{{ property.title }}</h2>
 
-            {% if user.is_authenticated %}
-                <a href="#" class="btn btn-primary mt-3">Contact Agent</a>
-            {% else %}
-                <p class="text-muted mt-3">Please <a href="{% url 'login_user' %}">login</a> to contact the agent.</p>
-            {% endif %}
+            <p class="text-muted mt-2">
+                📍 {{ property.city }}
+            </p>
+
+            <div class="price mt-3">
+                ₹ {{ property.price }} Cr
+            </div>
+
+            <div class="bhk-badge">
+                {{ property.bhk }} BHK
+            </div>
+
+            <p class="mt-4">
+                {{ property.description }}
+            </p>
+
+            <!-- AMENITIES (STATIC FOR NOW) -->
+            <h5 class="mt-4 fw-bold">Amenities</h5>
+            <div class="amenities">
+                <div class="amenity">🚗 Parking</div>
+                <div class="amenity">🏊 Swimming Pool</div>
+                <div class="amenity">🏋️ Gym</div>
+                <div class="amenity">🔒 Security</div>
+                <div class="amenity">🛗 Lift</div>
+                <div class="amenity">🌳 Garden</div>
+            </div>
+
+            <!-- ACTION -->
+            <div class="mt-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'book_visit' property.id %}" class="btn btn-book btn-lg">
+                        Book Visit
+                    </a>
+                {% else %}
+                    <a href="{% url 'login_user' %}" class="btn btn-primary btn-lg">
+                        Login to Book Visit
+                    </a>
+                {% endif %}
+            </div>
         </div>
 
     </div>
+
 </div>
 
 {% endblock %}
