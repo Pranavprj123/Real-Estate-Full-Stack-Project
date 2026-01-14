@@ -1,266 +1,178 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RealEstate – Find Your Dream Home</title>
+{% extends 'base.html' %}
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+{% block extra_css %}
+<style>
+.hero {
+    background: linear-gradient(135deg, #2D3E50, #1a2634);
+    color: white;
+    padding: 4rem;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+}
+.hero h1 {
+    font-weight: 800;
+}
+/* ===== Featured Property Cards ===== */
+.featured-card {
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+}
 
-    <style>
-        :root {
-            --primary: #2D3E50;
-            --secondary: #E8505B;
-            --accent: #F9A826;
-            --light-bg: #F8F9FA;
-            --muted: #6C757D;
-        }
+.featured-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 45px rgba(0,0,0,0.15);
+}
 
-        body {
-            background: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+.featured-img-wrapper {
+    position: relative;
+    overflow: hidden;
+}
 
-        /* ================= NAVBAR ================= */
-        .navbar {
-            background: linear-gradient(135deg, var(--primary), #1a2634);
-            padding: 1rem 0;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
+.featured-img-wrapper img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
 
-        .navbar-brand {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: #fff !important;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
+.featured-card:hover img {
+    transform: scale(1.08);
+}
 
-        .nav-link {
-            color: rgba(255,255,255,0.85) !important;
-            font-weight: 600;
-            margin: 0 0.4rem;
-            border-radius: 8px;
-        }
+/* BHK Badge */
+.bhk-badge {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: #ffffff;
+    color: #1a1a1a;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
 
-        .nav-link:hover {
-            background: rgba(255,255,255,0.12);
-            color: #fff !important;
-        }
+/* Card Body */
+.featured-body {
+    padding: 22px;
+}
 
-        .btn-login {
-            background: linear-gradient(135deg, #28a745, #1f7a35);
-            color: white;
-            border-radius: 10px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            border: none;
-        }
+.featured-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 12px;
+}
 
-        .btn-logout {
-            background: linear-gradient(135deg, var(--secondary), #c63a43);
-            color: white;
-            border-radius: 10px;
-            padding: 0.6rem 1.5rem;
-            font-weight: 600;
-            border: none;
-        }
+/* Property Info Row */
+.featured-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+}
 
-        /* ================= HERO ================= */
-        .hero {
-            background: linear-gradient(135deg, var(--primary), #1a2634);
-            border-radius: 20px;
-            padding: 4rem 3rem;
-            margin: 2rem 0 3rem;
-            color: white;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-        }
+.featured-info span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
-        .hero h1 {
-            font-size: 3.2rem;
-            font-weight: 800;
-        }
+.featured-price {
+    color: #ef4444;
+    font-weight: 700;
+}
 
-        .hero p {
-            font-size: 1.3rem;
-            color: rgba(255,255,255,0.9);
-        }
+/* Buy Button */
+.btn-buy {
+    background: linear-gradient(135deg, #28a745, #1e8e3e);
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    width: 100%;
+    transition: all 0.3s ease;
+}
 
-        .btn-explore {
-            background: linear-gradient(135deg, var(--accent), #e89b1f);
-            color: white;
-            padding: 1rem 2.6rem;
-            border-radius: 14px;
-            font-weight: 700;
-            border: none;
-        }
+.btn-buy:hover {
+    background: linear-gradient(135deg, #1e8e3e, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40,167,69,0.4);
+    color: #ffffff;
+}
 
-        /* ================= SECTION ================= */
-        .section-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 2rem;
-            position: relative;
-        }
+</style>
+{% endblock %}
 
-        .section-title::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -10px;
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--secondary), var(--accent));
-            border-radius: 3px;
-        }
+{% block content %}
 
-        /* ================= CARDS ================= */
-        .property-card {
-            border-radius: 18px;
-            overflow: hidden;
-            border: none;
-            background: white;
-            transition: all 0.4s ease;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.1);
-            height: 100%;
-        }
+<!-- HERO ONLY ON HOME -->
+<div class="hero">
+    <h1>Find Your Dream Home</h1>
+    <p class="fs-5 mt-2">Browse verified properties across India.</p>
+    <a href="{% url 'listings' %}" class="btn btn-warning btn-lg mt-3">
+        Explore Properties
+    </a>
+</div>
 
-        .property-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 18px 45px rgba(0,0,0,0.2);
-        }
+<h2 class="section-heading">Featured Properties</h2>
 
-        .property-card img {
-            height: 240px;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
+<div class="row g-4">
 
-        .property-card:hover img {
-            transform: scale(1.08);
-        }
+    {% for p in properties %}
+    <div class="col-md-4">
+        <div class="featured-card">
 
-        .badge-featured {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--secondary);
-            color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+            <!-- Image -->
+            <div class="featured-img-wrapper">
+                {% if p.main_image %}
+                    <img src="{{ p.main_image.url }}" alt="{{ p.title }}">
+                {% else %}
+                    <img src="https://via.placeholder.com/400x300?text=No+Image">
+                {% endif %}
 
-        .property-info {
-            color: var(--muted);
-            font-size: 0.95rem;
-            margin-bottom: 1rem;
-        }
-
-        .price {
-            color: var(--secondary);
-            font-weight: 800;
-        }
-
-        .btn-book {
-            background: linear-gradient(135deg, var(--accent), #e89b1f);
-            color: white;
-            border-radius: 12px;
-            padding: 0.7rem;
-            font-weight: 700;
-            border: none;
-            width: 100%;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-
-<!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-expand-lg navbar-dark">
-    <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">🏠 RealEstate</a>
-
-        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="nav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="{% url 'listings' %}">Properties</a></li>
-            </ul>
-
-            {% if user.is_authenticated %}
-                <span class="text-warning fw-bold me-3">Hi, {{ user.username }}</span>
-                <a href="{% url 'logout_user' %}" class="btn btn-logout">Logout</a>
-            {% else %}
-                <a href="{% url 'login_user' %}" class="btn btn-login">Login</a>
-            {% endif %}
-        </div>
-    </div>
-</nav>
-
-<!-- ================= CONTENT ================= -->
-<div class="container">
-
-    <!-- HERO -->
-    <div class="hero">
-        <h1>Find Your Dream Home</h1>
-        <p>Browse verified properties across India with confidence.</p>
-        <a href="{% url 'listings' %}" class="btn btn-explore mt-3">Explore Properties</a>
-    </div>
-
-    <!-- PROPERTIES -->
-    <h2 class="section-title">Featured Properties</h2>
-
-    <div class="row g-4">
-        {% for p in properties %}
-        <div class="col-md-4">
-            <div class="property-card">
-
-                <div class="position-relative">
-                    {% if p.main_image %}
-                        <img src="{{ p.main_image.url }}" class="w-100">
-                    {% else %}
-                        <img src="https://via.placeholder.com/400x300?text=No+Image" class="w-100">
-                    {% endif %}
-                    <span class="badge-featured">Featured</span>
-                </div>
-
-                <div class="p-3">
-                    <h5 class="fw-bold">{{ p.title }}</h5>
-
-                    <div class="property-info">
-                        🛏 {{ p.bhk }} BHK &nbsp;•&nbsp;
-                        📍 {{ p.city }} <br>
-                        <span class="price">₹ {{ p.price }}Cr</span>
-                    </div>
-
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'book_visit' p.id %}" class="btn btn-book">Book Visit</a>
-                    {% else %}
-                        <a href="{% url 'login_user' %}" class="btn btn-book">Login to Book</a>
-                    {% endif %}
+                <div class="bhk-badge">
+                    {{ p.bhk }} BHK
                 </div>
             </div>
+
+            <!-- Content -->
+            <div class="featured-body">
+                <h5 class="featured-title">{{ p.title }}</h5>
+
+                <div class="featured-info">
+                    <span>🛏 {{ p.bhk }} BHK</span>
+                    <span>•</span>
+                    <span class="featured-price">₹ {{ p.price }}Cr</span>
+                    <span>•</span>
+                    <span>📍 {{ p.city }}</span>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <a href="{% url 'book_visit' p.id %}" class="btn btn-buy">
+                        🏡 Buy Now
+                    </a>
+                {% else %}
+                    <a href="{% url 'login_user' %}" class="btn btn-buy">
+                        🏡 Buy Now
+                    </a>
+                {% endif %}
+            </div>
+
         </div>
-        {% empty %}
-            <p>No properties available.</p>
-        {% endfor %}
     </div>
+    {% endfor %}
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+
+{% endblock %}

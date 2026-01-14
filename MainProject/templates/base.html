@@ -2,199 +2,82 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>RealEstate</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RealEstate - Find Your Dream Home</title>
+
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2D3E50;
-            --secondary-color: #E8505B;
-            --accent-color: #F9A826;
-            --light-bg: #F8F9FA;
-            --dark-text: #1A1A1A;
-            --light-text: #6C757D;
-        }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--light-bg);
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #1a2634 100%) !important;
-            padding: 1rem 0;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-
-        .navbar-brand {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: white !important;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .navbar-brand:hover {
-            transform: scale(1.05);
-        }
-
-        .navbar-brand .icon {
-            background: var(--secondary-color);
-            padding: 0.4rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.85) !important;
-            font-weight: 500;
-            padding: 0.5rem 1rem !important;
-            margin: 0 0.25rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-link:hover {
-            color: white !important;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 2px;
-            background: var(--accent-color);
-            transition: width 0.3s ease;
-        }
-
-        .nav-link:hover::after {
-            width: 60%;
-        }
-
-        .user-greeting {
-            color: var(--accent-color) !important;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
-            background: rgba(249, 168, 38, 0.1);
-            border-radius: 8px;
-            margin-right: 0.5rem;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #28A745 0%, #20833A 100%);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-            background: linear-gradient(135deg, #20833A 0%, #28A745 100%);
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #d43f49 100%);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(232, 80, 91, 0.3);
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(232, 80, 91, 0.4);
-            background: linear-gradient(135deg, #d43f49 0%, var(--secondary-color) 100%);
-            color: white;
-        }
-
-        .container {
-            max-width: 1200px;
-        }
-
-        .content-wrapper {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
-            margin-top: 2rem;
-        }
-
-        @media (max-width: 991px) {
-            .navbar-nav {
-                margin-top: 1rem;
-            }
-            
-            .nav-link {
-                margin: 0.25rem 0;
-            }
-
-            .user-greeting {
-                margin-right: 0;
-                margin-bottom: 0.5rem;
-            }
-        }
-    </style>
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark">
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'home' %}">
-      <span class="icon">🏠</span>
-      <span>RealEstate</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample">
+    <a class="navbar-brand fw-bold" href="{% url 'home' %}">🏠 RealEstate</a>
+
+    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#nav">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarsExample">
+
+    <div class="collapse navbar-collapse" id="nav">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'listings' %}">Properties</a></li>
-      </ul>
-      <ul class="navbar-nav">
-        {% if user.is_authenticated %}
-        <li class="nav-item d-flex align-items-center">
-          <span class="user-greeting">👋 Hello, {{ user.username }}</span>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">Home</a>
         </li>
         <li class="nav-item">
-          <a class="btn btn-logout" href="{% url 'logout_user' %}">Logout</a>
+          <a class="nav-link" href="{% url 'listings' %}">Properties</a>
         </li>
-        {% else %}
-        <li class="nav-item">
-          <a class="btn btn-login" href="{% url 'login_user' %}">Login</a>
-        </li>
-        {% endif %}
       </ul>
+
+      {% if user.is_authenticated %}
+        <span class="text-warning fw-semibold me-3">
+          Hi, {{ user.username }}
+        </span>
+        <a href="{% url 'logout_user' %}" class="btn btn-danger">
+          Logout
+        </a>
+      {% else %}
+        <a href="{% url 'login_user' %}" class="btn btn-success">
+          Login
+        </a>
+      {% endif %}
     </div>
   </div>
 </nav>
 
-<div class="container">
-  <div class="content-wrapper">
-    {% block content %}
-    <h1 style="color: var(--primary-color); font-weight: 700;">Welcome to RealEstate</h1>
-    <p style="color: var(--light-text); font-size: 1.1rem;">Find your dream home today.</p>
-    {% endblock %}
-  </div>
+<!-- ================= MESSAGES ================= -->
+{% if messages %}
+<div class="container mt-3">
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show auto-dismiss" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ================= PAGE CONTENT ================= -->
+<div class="container my-4">
+    {% block content %}{% endblock %}
 </div>
 
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- ================= AUTO DISMISS SCRIPT ================= -->
+<script>
+    // Auto dismiss alerts after 3 seconds
+    setTimeout(function () {
+        const alerts = document.querySelectorAll('.auto-dismiss');
+        alerts.forEach(function (alert) {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 3000); // 3000ms = 3 seconds
+</script>
+
 </body>
 </html>
