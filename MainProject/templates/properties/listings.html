@@ -224,6 +224,60 @@
     <p>Explore all available properties and find your perfect home</p>
 </div>
 
+<!-- ================= FILTER BAR ================= -->
+<form method="get" class="card shadow-sm p-3 mb-4">
+    <div class="row g-3 align-items-end">
+
+        <!-- City -->
+        <div class="col-md-3">
+            <label class="form-label fw-semibold">City</label>
+            <input type="text" name="city" class="form-control"
+                   placeholder="e.g. Pune"
+                   value="{{ selected_city }}">
+        </div>
+
+        <!-- BHK -->
+        <div class="col-md-2">
+            <label class="form-label fw-semibold">BHK</label>
+            <select name="bhk" class="form-select">
+                <option value="">Any</option>
+                <option value="1" {% if selected_bhk == "1" %}selected{% endif %}>1 BHK</option>
+                <option value="2" {% if selected_bhk == "2" %}selected{% endif %}>2 BHK</option>
+                <option value="3" {% if selected_bhk == "3" %}selected{% endif %}>3 BHK</option>
+                <option value="4" {% if selected_bhk == "4" %}selected{% endif %}>4 BHK</option>
+            </select>
+        </div>
+
+        <!-- Min Price -->
+        <div class="col-md-2">
+            <label class="form-label fw-semibold">Min Price</label>
+            <input type="number" name="min_price" class="form-control"
+                   placeholder="50"
+                   value="{{ min_price }}">
+        </div>
+
+        <!-- Max Price -->
+        <div class="col-md-2">
+            <label class="form-label fw-semibold">Max Price</label>
+            <input type="number" name="max_price" class="form-control"
+                   placeholder="200"
+                   value="{{ max_price }}">
+        </div>
+
+        <!-- Buttons -->
+        <div class="col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary w-100">
+                🔍 Filter
+            </button>
+            <a href="{% url 'listings' %}" class="btn btn-secondary w-100">
+                Reset
+            </a>
+        </div>
+
+    </div>
+</form>
+
+
 <!-- Properties Grid -->
 <div class="row g-4">
     {% if properties %}
@@ -281,5 +335,71 @@
         </div>
     {% endif %}
 </div>
+
+<!-- ================= PAGINATION ================= -->
+{% if page_obj.has_other_pages %}
+<nav class="mt-4">
+  <ul class="pagination justify-content-center">
+
+    <!-- Previous -->
+    {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link"
+           href="?page={{ page_obj.previous_page_number }}
+           {% if selected_city %}&city={{ selected_city }}{% endif %}
+           {% if selected_bhk %}&bhk={{ selected_bhk }}{% endif %}
+           {% if min_price %}&min_price={{ min_price }}{% endif %}
+           {% if max_price %}&max_price={{ max_price }}{% endif %}">
+          Previous
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Previous</span>
+      </li>
+    {% endif %}
+
+    <!-- Page Numbers -->
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <li class="page-item active">
+          <span class="page-link">{{ num }}</span>
+        </li>
+      {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+        <li class="page-item">
+          <a class="page-link"
+             href="?page={{ num }}
+             {% if selected_city %}&city={{ selected_city }}{% endif %}
+             {% if selected_bhk %}&bhk={{ selected_bhk }}{% endif %}
+             {% if min_price %}&min_price={{ min_price }}{% endif %}
+             {% if max_price %}&max_price={{ max_price }}{% endif %}">
+            {{ num }}
+          </a>
+        </li>
+      {% endif %}
+    {% endfor %}
+
+    <!-- Next -->
+    {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link"
+           href="?page={{ page_obj.next_page_number }}
+           {% if selected_city %}&city={{ selected_city }}{% endif %}
+           {% if selected_bhk %}&bhk={{ selected_bhk }}{% endif %}
+           {% if min_price %}&min_price={{ min_price }}{% endif %}
+           {% if max_price %}&max_price={{ max_price }}{% endif %}">
+          Next
+        </a>
+      </li>
+    {% else %}
+      <li class="page-item disabled">
+        <span class="page-link">Next</span>
+      </li>
+    {% endif %}
+
+  </ul>
+</nav>
+{% endif %}
+
 
 {% endblock %}

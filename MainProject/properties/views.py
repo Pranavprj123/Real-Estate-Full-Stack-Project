@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import date
 from visits.models import VisitRequest
+from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from accounts.decorators import agent_required
 from .forms import PropertyForm, PropertyImageForm
@@ -44,7 +45,42 @@ def property_detail(request, id):
 
 def listings_view(request):
     properties = Property.objects.all()
-    return render(request, "properties/listings.html", {"properties": properties})
+
+    # Filters
+    city = request.GET.get('city')
+    bhk = request.GET.get('bhk')
+    min_price = request.GET.get('min_price')
+    max_price = request.GET.get('max_price')
+
+    if city:
+        properties = properties.filter(city__icontains=city)
+
+    if bhk:
+        properties = properties.filter(bhk=bhk)
+
+    if min_price:
+        properties = properties.filter(price__gte=min_price)
+
+    if max_price:
+        properties = properties.filter(price__lte=max_price)
+
+    # Pagination
+    paginator = Paginator(properties, 6)  # 6 properties per page
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'page_obj': page_obj,
+        'properties': page_obj.object_list,
+
+        # Keep filter values
+        'selected_city': city,
+        'selected_bhk': bhk,
+        'min_price': min_price,
+        'max_price': max_price,
+    }
+
+    return render(request, 'properties/listings.html', context)
 
 @login_required
 def add_to_wishlist(request, pk):
