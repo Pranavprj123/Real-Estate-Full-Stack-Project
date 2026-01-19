@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .dashboard-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 6px 25px rgba(0,0,0,0.1);
+    }
+
+    .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .status-approved {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-rejected {
+        background: #f8d7da;
+        color: #721c24;
+    }
+</style>
+
+<h2 class="mb-4">My Visit Requests</h2>
+
+<div class="dashboard-card">
+
+    {% if visits %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>City</th>
+                    <th>BHK</th>
+                    <th>Status</th>
+                    <th>Requested On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in visits %}
+                <tr>
+                    <td>{{ v.property.title }}</td>
+                    <td>{{ v.property.city }}</td>
+                    <td>{{ v.property.bhk }}</td>
+                    <td>
+                        <span class="status-badge 
+                        {% if v.status == 'pending' %}status-pending
+                        {% elif v.status == 'approved' %}status-approved
+                        {% else %}status-rejected{% endif %}">
+                            {{ v.status|title }}
+                        </span>
+                    </td>
+                    <td>{{ v.created_at|date:"d M Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p>You have not booked any visits yet.</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

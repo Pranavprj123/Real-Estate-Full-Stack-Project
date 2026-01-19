@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from properties.models import Property
+from visits.models import VisitRequest
+from django.contrib.auth.decorators import login_required   
 
 
 # ========================= HOME PAGE =========================
@@ -69,3 +71,27 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Logged out successfully.")
     return redirect('login_user')
+
+@login_required
+def user_dashboard(request):
+    visits = VisitRequest.objects.filter(
+        user=request.user
+    ).select_related('property').order_by('-created_at')
+
+    # Show notifications based on latest visit status
+    latest = visits.first()
+    if latest:
+        if latest.status == 'approved':
+            messages.success(
+                request,
+                f"Your visit request for '{latest.property.title}' has been approved!"
+            )
+        elif latest.status == 'rejected':
+            messages.error(
+                request,
+                f"Your visit request for '{latest.property.title}' was rejected."
+            )
+
+    return render(request, 'dashboard.html', {
+        'visits': visits
+    })
